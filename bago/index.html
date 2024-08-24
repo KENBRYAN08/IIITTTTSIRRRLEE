@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Register System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+        .popup.active {
+            display: block;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+        .overlay.active {
+            display: block;
+        }
+        button {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <button id="loginButton">Login</button>
+    <button id="registerButton">Register</button>
+    <button id="logoutButton" style="display: none;">Logout</button>
+
+    <div id="overlay" class="overlay"></div>
+
+    <!-- Login Popup -->
+    <div id="loginPopup" class="popup">
+        <h2>Login</h2>
+        <form id="loginForm" action="login.php" method="POST">
+            <label for="loginUsername">Username:</label><br>
+            <input type="text" id="loginUsername" name="username" required><br><br>
+            <label for="loginPassword">Password:</label><br>
+            <input type="password" id="loginPassword" name="password" required><br><br>
+            <input type="submit" value="Login">
+        </form>
+        <button onclick="togglePopup('loginPopup')">Close</button>
+    </div>
+
+    <!-- Register Popup -->
+    <div id="registerPopup" class="popup">
+        <h2>Register</h2>
+        <form id="registerForm" action="register.php" method="POST">
+            <label for="registerUsername">Username:</label><br>
+            <input type="text" id="registerUsername" name="username" required><br><br>
+            <label for="registerPassword">Password:</label><br>
+            <input type="password" id="registerPassword" name="password" required><br><br>
+            <input type="submit" value="Register">
+        </form>
+        <button onclick="togglePopup('registerPopup')">Close</button>
+    </div>
+
+    <script>
+        document.getElementById('loginButton').addEventListener('click', function() {
+            togglePopup('loginPopup');
+        });
+        document.getElementById('registerButton').addEventListener('click', function() {
+            togglePopup('registerPopup');
+        });
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            window.location.href = 'logout.php';
+        });
+
+        function togglePopup(popupId) {
+            const popup = document.getElementById(popupId);
+            const overlay = document.getElementById('overlay');
+            popup.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Show/hide logout button based on session status
+        fetch('check_session.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.loggedIn) {
+                    document.getElementById('logoutButton').style.display = 'inline';
+                    document.getElementById('loginButton').style.display = 'none';
+                    document.getElementById('registerButton').style.display = 'none';
+                } else {
+                    document.getElementById('logoutButton').style.display = 'none';
+                    document.getElementById('loginButton').style.display = 'inline';
+                    document.getElementById('registerButton').style.display = 'inline';
+                }
+            });
+    </script>
+</body>
+</html>
